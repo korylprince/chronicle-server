@@ -190,9 +190,9 @@ func (db *DB) writer() {
 		case ins = <-db.inserts:
 			db.queue[c.Next()] = ins
 		case <-timer.C:
+			timer.Reset(db.WriteInterval)
 
 			if len(db.queue) == 0 {
-				timer.Reset(db.WriteInterval)
 				continue
 			}
 
@@ -286,8 +286,6 @@ func (db *DB) writer() {
 					log.Println("Error closing statement:", err)
 				}
 			}
-
-			timer.Reset(db.WriteInterval)
 		}
 	}
 }
