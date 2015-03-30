@@ -2,7 +2,10 @@ package api
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"reflect"
+	"strings"
 	"time"
 )
 
@@ -11,6 +14,14 @@ type counter int64
 func (c *counter) Next() int64 {
 	(*c)++
 	return int64(*c)
+}
+
+func logQueryError(stmt *sql.Stmt, args ...interface{}) {
+	if stmt == nil {
+		log.Println("nil sql.Stmt passed to logQueryError with args:", args)
+	}
+	query := reflect.ValueOf(*stmt).FieldByName("query").String()
+	log.Println("Error: Offending query:", fmt.Sprintf(strings.Replace(query, "?", "\"%v\"", -1), args...))
 }
 
 //Insert represents a Decomposed Entry. If a field of Insert is nil, it already is in the database
@@ -142,6 +153,7 @@ func getOrInsert(getStmt, insStmt *sql.Stmt, args ...interface{}) (id int, err e
 	row := getStmt.QueryRow(args...)
 	err = row.Scan(rID)
 	if err != nil && err != sql.ErrNoRows {
+		logQueryError(getStmt, args...)
 		return 0, err
 	}
 	if *rID != 0 {
@@ -150,10 +162,14 @@ func getOrInsert(getStmt, insStmt *sql.Stmt, args ...interface{}) (id int, err e
 
 	res, err := insStmt.Exec(args...)
 	if err != nil {
+		logQueryError(insStmt, args...)
 		return 0, err
 	}
 
 	i, err := res.LastInsertId()
+	if err != nil {
+		logQueryError(insStmt, args...)
+	}
 	return int(i), err
 }
 
@@ -257,6 +273,7 @@ func (db *DB) writer() {
 					ins.LogEntry.Time,
 				)
 				if err != nil {
+					logQueryError(tstmts["lIns"], ins.IdentityID, ins.LogEntry.Time)
 					log.Println("Error inserting log:", err)
 				}
 			} //end inner loop
