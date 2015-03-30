@@ -23,7 +23,7 @@ The client will only work on OS X, and has only been tested on 10.9. The server 
 
 `go get github.com/korylprince/chronicle-server`
 
-`sql/v1.1.1.sql` will create the table and indexes.
+`sql/v1.1.1.sql` will create the table and indexes. Make sure the database uses a utf8 collation, or convert the tables to utf8 after creating them with `ALTER TABLE <tablename> CONVERT TO CHARACTER SET utf8;`
 
 `github.com/korylprince/chronicle-server/util` is a commandline tool that will migrate data from the old v1.1 schema.
 
