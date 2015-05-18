@@ -54,6 +54,8 @@ type DB struct {
 
 	cache *Cache
 
+	err error
+
 	WriteInterval time.Duration
 }
 
@@ -137,11 +139,12 @@ func (db *DB) worker() {
 	}
 }
 
-//makeStmt creates a prepared statement or panics if there is an error
-func makeStmt(db *sql.DB, query string) *sql.Stmt {
-	s, err := db.Prepare(query)
+//makeStmt creates a prepared statement or sets an error on db if one occurred
+func makeStmt(db *DB, query string) *sql.Stmt {
+	s, err := db.DB.Prepare(query)
 	if err != nil {
-		log.Panicln("Cannot create prepared statement:", query, "\n\t", err)
+		log.Println("Cannot create prepared statement:", query, "\n\t", err)
+		db.err = err
 	}
 	return s
 }
@@ -181,21 +184,28 @@ func (db *DB) writer() {
 
 	lCache := NewCache()
 
+mkstmts:
 	stmts := map[string]*sql.Stmt{
 
-		"uIns": makeStmt(db.DB, "INSERT INTO user(uid, username, fullname) VALUES(?, ?, ?);"),
-		"uGet": makeStmt(db.DB, "SELECT id FROM user WHERE uid=? AND username=? AND fullname=?;"),
+		"uIns": makeStmt(db, "INSERT INTO user(uid, username, fullname) VALUES(?, ?, ?);"),
+		"uGet": makeStmt(db, "SELECT id FROM user WHERE uid=? AND username=? AND fullname=?;"),
 
-		"dIns": makeStmt(db.DB, "INSERT INTO device(serial, clientidentifier, hostname) VALUES(?, ?, ?);"),
-		"dGet": makeStmt(db.DB, "SELECT id FROM device WHERE serial=? AND clientidentifier=? AND hostname=?;"),
+		"dIns": makeStmt(db, "INSERT INTO device(serial, clientidentifier, hostname) VALUES(?, ?, ?);"),
+		"dGet": makeStmt(db, "SELECT id FROM device WHERE serial=? AND clientidentifier=? AND hostname=?;"),
 
-		"aIns": makeStmt(db.DB, "INSERT INTO address(ip, internetip) VALUES(?, ?);"),
-		"aGet": makeStmt(db.DB, "SELECT id FROM address WHERE ip=? AND internetip=?;"),
+		"aIns": makeStmt(db, "INSERT INTO address(ip, internetip) VALUES(?, ?);"),
+		"aGet": makeStmt(db, "SELECT id FROM address WHERE ip=? AND internetip=?;"),
 
-		"iIns": makeStmt(db.DB, "INSERT INTO identity(user_id, device_id, address_id) VALUES(?, ?, ?);"),
-		"iGet": makeStmt(db.DB, "SELECT id FROM identity where user_id=? AND device_id=? AND address_id=?;"),
+		"iIns": makeStmt(db, "INSERT INTO identity(user_id, device_id, address_id) VALUES(?, ?, ?);"),
+		"iGet": makeStmt(db, "SELECT id FROM identity where user_id=? AND device_id=? AND address_id=?;"),
 
-		"lIns": makeStmt(db.DB, "INSERT INTO log(identity_id, time) VALUES(?, ?);"),
+		"lIns": makeStmt(db, "INSERT INTO log(identity_id, time) VALUES(?, ?);"),
+	}
+
+	//if there is a problem getting to the database wait and try again
+	if db.err != nil {
+		time.Sleep(db.WriteInterval)
+		goto mkstmts
 	}
 
 	timer := time.NewTimer(db.WriteInterval)
