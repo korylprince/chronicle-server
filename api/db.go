@@ -204,6 +204,7 @@ mkstmts:
 
 	//if there is a problem getting to the database wait and try again
 	if db.err != nil {
+		db.err = nil
 		time.Sleep(db.WriteInterval)
 		goto mkstmts
 	}
