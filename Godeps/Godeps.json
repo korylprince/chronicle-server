@@ -1,0 +1,31 @@
+{
+	"ImportPath": "github.com/korylprince/chronicle-server",
+	"GoVersion": "go1.10",
+	"GodepVersion": "v80",
+	"Deps": [
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.3-59-g1a676ac",
+			"Rev": "1a676ac6e4dce68e9303a1800773861350374a9e"
+		},
+		{
+			"ImportPath": "github.com/gorilla/handlers",
+			"Comment": "v1.3.0",
+			"Rev": "90663712d74cb411cbef281bc1e08c19d1a76145"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Comment": "v1.6.1-13-g4dbd923",
+			"Rev": "4dbd923b0c9e99ff63ad54b0e9705ff92d3cdb06"
+		},
+		{
+			"ImportPath": "github.com/kelseyhightower/envconfig",
+			"Comment": "v1.3.0-12-gb2c5c87",
+			"Rev": "b2c5c876e2659d9060d82e9b8494150d53854cc4"
+		},
+		{
+			"ImportPath": "github.com/thoas/stats",
+			"Rev": "37829025d2242afb04d91572cb143e00019e2aac"
+		}
+	]
+}
