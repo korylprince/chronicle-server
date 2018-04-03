@@ -4,7 +4,7 @@ ARG VERSION
 
 RUN apk add --no-cache git ca-certificates
 
-RUN git clone --branch "v1.0" --single-branch --depth 1 \
+RUN git clone --branch "v1.1" --single-branch --depth 1 \
     https://github.com/korylprince/fileenv.git /go/src/github.com/korylprince/fileenv
 
 RUN git clone --branch "$VERSION" --single-branch --depth 1 \
