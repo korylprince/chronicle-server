@@ -25,8 +25,13 @@ func init() {
 func middleware(h http.Handler) http.Handler {
 	return httpstats.Handler(handlers.CombinedLoggingHandler(os.Stdout,
 		handlers.CompressHandler(
-			http.StripPrefix(config.Prefix,
-				ForwardedHandler(h)))))
+			handlers.CORS(
+				handlers.AllowedOrigins([]string{"*"}),
+				handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"}),
+				handlers.AllowedHeaders([]string{"Accept", "Content-Type", "Origin"}),
+			)(
+				http.StripPrefix(config.Prefix,
+					ForwardedHandler(h))))))
 }
 
 func main() {
