@@ -1,7 +1,7 @@
 Go stats handler
 ================
 
-.. image:: https://secure.travis-ci.org/thoas/stats.png?branch=master
+.. image:: https://secure.travis-ci.org/thoas/stats.svg?branch=master
     :alt: Build Status
     :target: http://travis-ci.org/thoas/stats
 
@@ -184,7 +184,7 @@ a ``Martini.Context`` in ``server.go``:
 
             c.Next()
 
-            middleware.End(beginning, recorder)
+            middleware.End(beginning, stats.WithRecorder(recorder))
         })
         m.Run()
     }
