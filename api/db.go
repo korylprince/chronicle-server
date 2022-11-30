@@ -24,7 +24,7 @@ func logQueryError(stmt *sql.Stmt, args ...interface{}) {
 	log.Println("Error: Offending query:", fmt.Sprintf(strings.Replace(query, "?", "\"%v\"", -1), args...))
 }
 
-//Insert represents a Decomposed Entry. If a field of Insert is nil, it already is in the database
+// Insert represents a Decomposed Entry. If a field of Insert is nil, it already is in the database
 type Insert struct {
 	*User
 	*Device
@@ -43,7 +43,7 @@ type Insert struct {
 	IdentityID int
 }
 
-//DB represents a database
+// DB represents a database
 type DB struct {
 	DB *sql.DB
 
@@ -59,17 +59,17 @@ type DB struct {
 	WriteInterval time.Duration
 }
 
-//Push passes the entry onto the queue to be processed
+// Push passes the entry onto the queue to be processed
 func (db *DB) Push(e *Entry) {
 	db.entries <- e
 }
 
-//QueueLen returns then length of the writer queue
+// QueueLen returns then length of the writer queue
 func (db *DB) QueueLen() int {
 	return len(db.queue)
 }
 
-//worker processes entries from the queue and pushes them to the writer
+// worker processes entries from the queue and pushes them to the writer
 func (db *DB) worker() {
 	for {
 		e := <-db.entries
@@ -139,7 +139,7 @@ func (db *DB) worker() {
 	}
 }
 
-//makeStmt creates a prepared statement or sets an error on db if one occurred
+// makeStmt creates a prepared statement or sets an error on db if one occurred
 func makeStmt(db *DB, query string) *sql.Stmt {
 	s, err := db.DB.Prepare(query)
 	if err != nil {
@@ -149,7 +149,7 @@ func makeStmt(db *DB, query string) *sql.Stmt {
 	return s
 }
 
-//getOrInsert gets the id of a row if it exists or creates the row and returns the new id
+// getOrInsert gets the id of a row if it exists or creates the row and returns the new id
 func getOrInsert(getStmt, insStmt *sql.Stmt, args ...interface{}) (id int, err error) {
 	rID := new(int)
 
@@ -176,7 +176,7 @@ func getOrInsert(getStmt, insStmt *sql.Stmt, args ...interface{}) (id int, err e
 	return int(i), err
 }
 
-//write polls the queue and every db.WriteInterval writes the data to the database and updates the cache
+// write polls the queue and every db.WriteInterval writes the data to the database and updates the cache
 func (db *DB) writer() {
 	var ins *Insert
 
@@ -318,8 +318,12 @@ mkstmts:
 	}
 }
 
-//NewDB creates a new DB with the given driver and dsn as used by database/sql's Open.
-//workers specifies how many worker goroutines will be used
+func (db *DB) QueryLastUser(serials []string) ([]Entry, error) {
+	return nil, nil
+}
+
+// NewDB creates a new DB with the given driver and dsn as used by database/sql's Open.
+// workers specifies how many worker goroutines will be used
 func NewDB(driver, dsn string, workers int, writeInterval time.Duration) (*DB, error) {
 	db, err := sql.Open(driver, dsn)
 	if err != nil {

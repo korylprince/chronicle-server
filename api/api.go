@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-//ValidationError represents a field that is too long
+// ValidationError represents a field that is too long
 type ValidationError string
 
 func (v ValidationError) Error() string {
@@ -17,10 +17,10 @@ func checkLength(s string, l int) bool {
 	return len(s) <= l
 }
 
-//Hash is an MD5 hash
+// Hash is an MD5 hash
 type Hash [md5.Size]byte
 
-//NewHash returns a hashed MD5 Sum of the given strings
+// NewHash returns a hashed MD5 Sum of the given strings
 func NewHash(args ...string) Hash {
 	var data []byte
 	for _, s := range args {
@@ -29,7 +29,7 @@ func NewHash(args ...string) Hash {
 	return md5.Sum(data)
 }
 
-//Entry represents information about a computer
+// Entry represents information about a computer
 type Entry struct {
 	UID              uint32    `json:"uid"`
 	Username         string    `json:"username"`
@@ -42,7 +42,7 @@ type Entry struct {
 	Time             time.Time `json:"time,omitempty"`
 }
 
-//Hashes generates and returns the user, device, address, and identity hashes for an Entry
+// Hashes generates and returns the user, device, address, and identity hashes for an Entry
 func (e *Entry) Hashes() (user Hash, device Hash, address Hash, identity Hash) {
 	u := NewHash(strconv.Itoa(int(e.UID)), e.Username, e.FullName)
 	d := NewHash(e.Serial, e.ClientIdentifier, e.Hostname)
@@ -51,7 +51,7 @@ func (e *Entry) Hashes() (user Hash, device Hash, address Hash, identity Hash) {
 	return u, d, a, i
 }
 
-//Validate checks that the given Entry's fields fit in the DB
+// Validate checks that the given Entry's fields fit in the DB
 func (e *Entry) Validate() error {
 	switch {
 	case !checkLength(e.Username, 64):
@@ -72,7 +72,7 @@ func (e *Entry) Validate() error {
 	return nil
 }
 
-//User represents a user
+// User represents a user
 type User struct {
 	ID       int
 	UID      uint32
@@ -80,7 +80,7 @@ type User struct {
 	FullName string
 }
 
-//Device represents a device
+// Device represents a device
 type Device struct {
 	ID               int
 	Serial           string
@@ -88,14 +88,14 @@ type Device struct {
 	Hostname         string
 }
 
-//Address represents a set of IP Addresses
+// Address represents a set of IP Addresses
 type Address struct {
 	ID         int
 	IP         string
 	InternetIP string
 }
 
-//Identity represents a unique set of User, Device, and Address
+// Identity represents a unique set of User, Device, and Address
 type Identity struct {
 	ID        int
 	UserID    int
@@ -103,7 +103,7 @@ type Identity struct {
 	AddressID int
 }
 
-//LogEntry represents an event
+// LogEntry represents an event
 type LogEntry struct {
 	ID         int64
 	IdentityID int
