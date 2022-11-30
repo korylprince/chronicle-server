@@ -377,7 +377,7 @@ func (db *DB) QueryLastUser(serials []string) ([]*Entry, error) {
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("could not scan rows: %w", err)
 	}
-	return nil, nil
+	return entries, nil
 }
 
 // NewDB creates a new DB with the given driver and dsn as used by database/sql's Open.
