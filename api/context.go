@@ -2,9 +2,10 @@ package api
 
 import "net/http"
 
-//Context is a set of services accessed by endpoints
+// Context is a set of services accessed by endpoints
 type Context struct {
-	DB *DB
+	DB     *DB
+	APIKey string
 }
 
 type contextHandler struct {
@@ -16,7 +17,7 @@ func (c contextHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c.HandleFunc(c.Context, w, r)
 }
 
-//SubmitHandler returns an http.Handler for submitHandler
+// SubmitHandler returns an http.Handler for submitHandler
 func SubmitHandler(c *Context) http.Handler {
 	return contextHandler{HandleFunc: submitHandler, Context: c}
 }

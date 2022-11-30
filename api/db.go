@@ -318,7 +318,65 @@ mkstmts:
 	}
 }
 
-func (db *DB) QueryLastUser(serials []string) ([]Entry, error) {
+const queryLastUser = `
+select 
+	user.username,
+	user.fullname,
+    device.serial,
+    address.ip,
+    address.internetip,
+	log.time
+from (
+    select
+        max(log.id) as id
+    from device
+    inner join identity on device.id = identity.device_id
+    inner join user on user.id = identity.user_id
+    inner join log on log.identity_id = identity.id
+    where
+        device.serial in (%s) and
+        user.username not in ('administrator', 'root', '')
+    group by
+        device.serial
+) as joined
+inner join log on
+    joined.id = log.id
+inner join identity on
+    log.identity_id = identity.id
+inner join device on
+    identity.device_id = device.id
+inner join user on
+    identity.user_id = user.id
+inner join address on
+    identity.address_id = address.id
+`
+
+func (db *DB) QueryLastUser(serials []string) ([]*Entry, error) {
+	params := make([]interface{}, len(serials))
+	for idx, s := range serials {
+		params[idx] = s
+	}
+	placeholder := strings.Join(strings.Split(strings.Repeat("?", len(serials)), ""), ",")
+	query := fmt.Sprintf(queryLastUser, placeholder)
+
+	rows, err := db.DB.Query(query, params...)
+	if err != nil {
+		return nil, fmt.Errorf("could not query db: %w", err)
+	}
+	defer rows.Close()
+
+	var entries []*Entry
+	for rows.Next() {
+		e := new(Entry)
+		if err := rows.Scan(&e.Username, &e.FullName, &e.Serial, &e.IP, &e.InternetIP, &e.Time); err != nil {
+			return nil, fmt.Errorf("could not scan row: %w", err)
+		}
+
+		entries = append(entries, e)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("could not scan rows: %w", err)
+	}
 	return nil, nil
 }
 

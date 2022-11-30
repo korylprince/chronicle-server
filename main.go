@@ -21,7 +21,7 @@ func init() {
 	httpstats = stats.New()
 }
 
-//middleware
+// middleware
 func middleware(h http.Handler) http.Handler {
 	return httpstats.Handler(handlers.CombinedLoggingHandler(os.Stdout,
 		handlers.CompressHandler(
@@ -41,7 +41,8 @@ func main() {
 	}
 
 	c := &api.Context{
-		DB: db,
+		DB:     db,
+		APIKey: config.APIKey,
 	}
 
 	r := mux.NewRouter()
@@ -50,6 +51,7 @@ func main() {
 	r.Handle("/api/v1/submit", api.SubmitHandler(c)).Methods("POST")
 	r.Handle("/api/v1.1/submit", api.SubmitHandler(c)).Methods("POST")
 	r.Handle("/api/v1.1/stats", http.HandlerFunc(StatsHandler)).Methods("GET")
+	r.Handle("/api/v1.1/query_serial", c.HandleQueryLastUser()).Methods("POST")
 
 	log.Println("Listening on:", config.ListenAddr)
 	log.Println(http.ListenAndServe(config.ListenAddr, middleware(r)))

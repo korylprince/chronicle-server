@@ -31,12 +31,12 @@ func NewHash(args ...string) Hash {
 
 // Entry represents information about a computer
 type Entry struct {
-	UID              uint32    `json:"uid"`
+	UID              uint32    `json:"uid,omitempty"`
 	Username         string    `json:"username"`
 	FullName         string    `json:"full_name"`
 	Serial           string    `json:"serial"`
-	ClientIdentifier string    `json:"client_identifier"`
-	Hostname         string    `json:"hostname"`
+	ClientIdentifier string    `json:"client_identifier,omitempty"`
+	Hostname         string    `json:"hostname,omitempty"`
 	IP               string    `json:"ip"`
 	InternetIP       string    `json:"internet_ip,omitempty"`
 	Time             time.Time `json:"time,omitempty"`

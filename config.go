@@ -7,10 +7,12 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-//Config represents options given in the environment
+// Config represents options given in the environment
 type Config struct {
 	SQLDriver string //required
 	SQLDSN    string //required
+
+	APIKey string
 
 	Workers       int //default: 10
 	WriteInterval int //in seconds; default:15s
