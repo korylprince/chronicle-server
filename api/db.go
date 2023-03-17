@@ -20,7 +20,7 @@ func logQueryError(stmt *sql.Stmt, args ...interface{}) {
 	if stmt == nil {
 		log.Println("nil sql.Stmt passed to logQueryError with args:", args)
 	}
-	query := reflect.ValueOf(*stmt).FieldByName("query").String()
+	query := reflect.ValueOf(stmt).Elem().FieldByName("query").String()
 	log.Println("Error: Offending query:", fmt.Sprintf(strings.Replace(query, "?", "\"%v\"", -1), args...))
 }
 
@@ -351,6 +351,7 @@ inner join address on
     identity.address_id = address.id
 `
 
+// QueryLastUser returns the last information for serials
 func (db *DB) QueryLastUser(serials []string) ([]*Entry, error) {
 	params := make([]interface{}, len(serials))
 	for idx, s := range serials {

@@ -39,10 +39,13 @@ func submitHandler(c *Context, rw http.ResponseWriter, r *http.Request) {
 	c.DB.Push(e)
 }
 
-var ErrAPINotEnabled = errors.New("api not enabled")
-var ErrInvalidAuthHeader = errors.New("invalid auth header")
-var ErrInvalidAPIKey = errors.New("invalid api key")
-var ErrInvalidSerialCount = errors.New("invalid serial count")
+// API errors
+var (
+	ErrAPINotEnabled      = errors.New("api not enabled")
+	ErrInvalidAuthHeader  = errors.New("invalid auth header")
+	ErrInvalidAPIKey      = errors.New("invalid api key")
+	ErrInvalidSerialCount = errors.New("invalid serial count")
+)
 
 func (c *Context) handleQueryLastUser(w http.ResponseWriter, r *http.Request) (int, interface{}) {
 	if c.APIKey == "" {
@@ -74,6 +77,7 @@ func (c *Context) handleQueryLastUser(w http.ResponseWriter, r *http.Request) (i
 	return http.StatusOK, entries
 }
 
+// HandleQueryLastUser returns the latest information for the submitted serials
 func (c *Context) HandleQueryLastUser() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		status, body := c.handleQueryLastUser(w, r)

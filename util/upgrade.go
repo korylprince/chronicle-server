@@ -10,6 +10,7 @@ import (
 	"github.com/korylprince/chronicle-server/api"
 )
 
+// Config is configuration for chronicle-server
 type Config struct {
 	SQLDriver     string
 	SQLDSN        string
