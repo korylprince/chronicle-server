@@ -19,7 +19,7 @@ The server logs this to a database along with the time and IP of the client as s
 
 The client will only work on OS X, and has only been tested on 10.9. The server will probably run anywhere.
 
-#Installing#
+# Installing
 
 `go get github.com/korylprince/chronicle-server`
 
@@ -30,7 +30,7 @@ The client will only work on OS X, and has only been tested on 10.9. The server 
 If you have any issues or questions, email the email address below, or open an issue at:
 https://github.com/korylprince/chronicle-server/issues
 
-#Usage#
+# Usage
 
 Read the source. It's pretty simple and readable.
 
@@ -47,7 +47,7 @@ The following Enviroment Variables are configurable:
     * CHRONICLE_LISTENADDR string //addr format used for net.Dial; required
     * CHRONICLE_PREFIX     string //url prefix to mount api to without trailing slash
 
-#Copyright Information#
+# Copyright Information#
 
 Copyright 2015 Kory Prince (korylprince at gmail dot com.)
 
