@@ -47,7 +47,7 @@ var (
 	ErrInvalidSerialCount = errors.New("invalid serial count")
 )
 
-func (c *Context) handleQueryLastUser(w http.ResponseWriter, r *http.Request) (int, interface{}) {
+func (c *Context) handleQueryLastUser(_ http.ResponseWriter, r *http.Request) (int, interface{}) {
 	if c.APIKey == "" {
 		return http.StatusNotFound, ErrAPINotEnabled
 	}

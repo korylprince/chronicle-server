@@ -12,7 +12,7 @@ type forwardedHandler struct {
 	chain http.Handler
 }
 
-//ForwardedHandler replaces the Remote Address with the X-Forwarded-For header if it exists
+// ForwardedHandler replaces the Remote Address with the X-Forwarded-For header if it exists
 func ForwardedHandler(h http.Handler) http.Handler {
 	return forwardedHandler{h}
 }
@@ -30,8 +30,8 @@ func (h forwardedHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	h.chain.ServeHTTP(rw, r)
 }
 
-//StatsHandler returns the current stats
-func StatsHandler(w http.ResponseWriter, r *http.Request) {
+// StatsHandler returns the current stats
+func StatsHandler(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	e := json.NewEncoder(w)
 	err := e.Encode(httpstats.Data())
